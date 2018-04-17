@@ -14,7 +14,7 @@ public class RoundController : MonoBehaviour, ISceneController, IUserAction{
 	public RoundActionManager actionManager;
 	public ScoreRecorder scoreRecorder;
 	private List<GameObject> disks;
-	private int round;//第几个回合
+	private int round;
 	private GameObject shootAtSth;
 	GameObject explosion;
 
@@ -25,7 +25,7 @@ public class RoundController : MonoBehaviour, ISceneController, IUserAction{
 	//游戏状态
 	public State state { get; set; }
 
-	//计时器, 每关60秒倒计时
+	
 	public int leaveSeconds;
 	public int leaveSecond2;
 
@@ -90,7 +90,7 @@ public class RoundController : MonoBehaviour, ISceneController, IUserAction{
 	public int getRound(){
 		return round;
 	}
-	public void shoot()//用户在游戏状态为开始或者继续时，才能左键射击
+	public void shoot()
 	{
 		if (Input.GetMouseButtonDown(0) && (state == State.START || state == State.CONTINUE))
 		{
@@ -115,10 +115,10 @@ public class RoundController : MonoBehaviour, ISceneController, IUserAction{
 		if(count - leaveSeconds== 1)
 		{
 			count = leaveSeconds;
-			GameObject disk = diskFactory.GetDisk(round);//从飞碟工厂得到飞碟
+			GameObject disk = diskFactory.GetDisk(round);
 			Debug.Log(disk);
-			disks.Add(disk);//飞碟进入场景
-			actionManager.addRandomAction(disk);//让动作管理者设计轨迹
+			disks.Add(disk);
+			actionManager.addRandomAction(disk);
 		}
 	}
 
@@ -128,7 +128,7 @@ public class RoundController : MonoBehaviour, ISceneController, IUserAction{
 		{
 			if( disks[i].transform.position.z < -18)
 			{
-				diskFactory.FreeDisk(disks[i]);//让飞碟工厂回收
+				diskFactory.FreeDisk(disks[i]);
 				disks.Remove(disks[i]);
 			}
 		}
@@ -140,9 +140,9 @@ public class RoundController : MonoBehaviour, ISceneController, IUserAction{
 	{
 		if(shootAtSth != null && shootAtSth.transform.tag == "Disk" && shootAtSth.activeInHierarchy)//射中飞碟
 		{
-			scoreRecorder.Record(shootAtSth);//计分
-			diskFactory.FreeDisk(shootAtSth);//回收飞碟
-			shootAtSth = null;//点击的物体重置为空，避免计分出错
+			scoreRecorder.Record(shootAtSth);
+			diskFactory.FreeDisk(shootAtSth);
+			shootAtSth = null;
 		}
 
 		if(scoreRecorder.getScore() > 500 * round)//每关500分才能进入下一关，重新倒数60秒
@@ -173,7 +173,7 @@ public class RoundController : MonoBehaviour, ISceneController, IUserAction{
 		StopAllCoroutines();
 		for (int i = 0; i < disks.Count; i++)
 		{
-			disks[i].SetActive(false);//暂停后飞碟不可见
+			disks[i].SetActive(false);
 		}
 	}
 //	IEnumerator waitForOneSecond()
@@ -196,16 +196,16 @@ public class RoundController : MonoBehaviour, ISceneController, IUserAction{
 ////		StopAllCoroutines();
 ////		for (int i = 0; i < disks.Count; i++)
 ////		{
-////			disks[i].SetActive(false);//暂停后飞碟不可见
+////			disks[i].SetActive(false);
 ////		}
 //	}
 	public void Resume()
 	{
-		StartCoroutine(DoCountDown());         //开启协程计时
+		StartCoroutine(DoCountDown());         
 		state = State.CONTINUE;
 		for (int i = 0; i < disks.Count; i++)
 		{
-			disks[i].SetActive(true);//恢复后飞碟可见
+			disks[i].SetActive(true);
 		}
 	}
 
