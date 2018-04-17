@@ -12,7 +12,6 @@ public class ScoreRecorder : MonoBehaviour {
 
 	public void Record(GameObject disk)
 	{
-		//size越小、速度越快，分越高
 		score += (100 - disk.GetComponent<DiskData>().size *(20 - disk.GetComponent<DiskData>().speed));
 
 		//根据颜色加分
