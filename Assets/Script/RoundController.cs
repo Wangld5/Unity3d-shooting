@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using Com.game;
 
 public enum State { WIN, LOSE, PAUSE, CONTINUE, START };
@@ -16,11 +18,16 @@ public class RoundController : MonoBehaviour, ISceneController, IUserAction{
 	private GameObject shootAtSth;
 	GameObject explosion;
 
+	public int CoolTimes = 3;
+	public Text GameText;//倒计时文本
+
+
 	//游戏状态
 	public State state { get; set; }
 
 	//计时器, 每关60秒倒计时
 	public int leaveSeconds;
+	public int leaveSecond2;
 
 	//用来计数，每秒自动发射一次飞碟
 	public int count;
@@ -29,6 +36,11 @@ public class RoundController : MonoBehaviour, ISceneController, IUserAction{
 	{
 		while (leaveSeconds >= 0)
 		{
+			if (leaveSeconds >= 60) {
+				GameText.text = (leaveSeconds - 60).ToString ();
+			} else {
+				GameText.text = "";
+			}
 			yield return new WaitForSeconds(1);
 			leaveSeconds--;
 		}
@@ -46,8 +58,10 @@ public class RoundController : MonoBehaviour, ISceneController, IUserAction{
 		scoreRecorder = Singleton<ScoreRecorder>.Instance;
 		actionManager = Singleton<RoundActionManager>.Instance;
 
-		leaveSeconds = 60;
-		count = leaveSeconds;
+		leaveSeconds = 63;
+		leaveSecond2 = 60;
+
+		count = leaveSecond2;
 
 		state = State.PAUSE;
 
@@ -56,7 +70,6 @@ public class RoundController : MonoBehaviour, ISceneController, IUserAction{
 
 
 	void Start () {
-
 		round = 1;//从第一关开始
 		LoadResources();
 	}
@@ -99,7 +112,7 @@ public class RoundController : MonoBehaviour, ISceneController, IUserAction{
 
 	public void LaunchDisk()//每秒自动发射飞碟
 	{
-		if(count - leaveSeconds == 1)
+		if(count - leaveSeconds== 1)
 		{
 			count = leaveSeconds;
 			GameObject disk = diskFactory.GetDisk(round);//从飞碟工厂得到飞碟
@@ -156,13 +169,36 @@ public class RoundController : MonoBehaviour, ISceneController, IUserAction{
 	public void Pause()
 	{
 		state = State.PAUSE;
+		CoolTimes = 3;
 		StopAllCoroutines();
 		for (int i = 0; i < disks.Count; i++)
 		{
 			disks[i].SetActive(false);//暂停后飞碟不可见
 		}
 	}
-
+//	IEnumerator waitForOneSecond()
+//	{
+//		while (CoolTimes >= 0)
+//		{
+//			GameText.text = CoolTimes.ToString();
+//			print("还剩" + CoolTimes);
+//			yield return new WaitForSeconds(1);
+//			CoolTimes--;
+//		}
+//		GameText.text = "";
+//	}
+//	public void myGameStart(){
+//		StartCoroutine (waitForOneSecond ());
+//	}
+//	public void CountEnd(){
+////		state = State.PAUSE;
+////		CoolTimes = 3;
+////		StopAllCoroutines();
+////		for (int i = 0; i < disks.Count; i++)
+////		{
+////			disks[i].SetActive(false);//暂停后飞碟不可见
+////		}
+//	}
 	public void Resume()
 	{
 		StartCoroutine(DoCountDown());         //开启协程计时
@@ -175,6 +211,7 @@ public class RoundController : MonoBehaviour, ISceneController, IUserAction{
 
 	public void Restart()
 	{
+		CoolTimes = 3;
 		scoreRecorder.Reset();
 		Application.LoadLevel(Application.loadedLevelName);
 		SSDirector.getInstance().currentScenceController.state = State.START;

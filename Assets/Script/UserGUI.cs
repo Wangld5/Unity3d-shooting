@@ -9,6 +9,7 @@ public class UserGUI : MonoBehaviour
 	private IUserAction action;
 	private float width, height;
 	private string countDownTitle;
+//	private CountDown mycount;
 
 	void Start()
 	{
@@ -32,17 +33,29 @@ public class UserGUI : MonoBehaviour
 		height = Screen.height / 12;
 
 		//倒计时
-		GUI.Label(new Rect(castw(2f)+20, casth(6f) - 20, 50, 50), ((RoundController)SSDirector.getInstance().currentScenceController).leaveSeconds.ToString());
+		GUI.Button(new Rect(10, 130, 80, 30), "Time: "+((RoundController)SSDirector.getInstance().currentScenceController).count.ToString());
 		//回合数
 		GUI.Button(new Rect(10, 40, 80, 30), "Round "+((RoundController)SSDirector.getInstance().currentScenceController).getRound());
 		//分数
 		GUI.Button(new Rect(10, 70, 80, 30), "Score "+((RoundController)SSDirector.getInstance().currentScenceController).scoreRecorder.getScore().ToString());
 
+		if (GUI.Button (new Rect (10, 100, 80, 30), "Restart")) {
+			SSDirector.getInstance ().currentScenceController.Restart ();
+		}
+
 		if (SSDirector.getInstance().currentScenceController.state != State.WIN && SSDirector.getInstance().currentScenceController.state != State.LOSE
 			&& GUI.Button(new Rect(10, 10, 80, 30), countDownTitle))
 		{
-
-			if (countDownTitle == "Start")
+			if (countDownTitle == "Start") {
+				countDownTitle = "Pause";
+//				while(count >= 0){
+//					Gametext.text = count.ToString ();
+//					StartCoroutine (StartCoutine ());
+//				}
+//				Gametext.text = "";
+				SSDirector.getInstance().currentScenceController.Resume();
+			}
+			else if (countDownTitle == "Continue")
 			{
 				//恢复场景
 				countDownTitle = "Pause";
@@ -51,7 +64,7 @@ public class UserGUI : MonoBehaviour
 			else
 			{
 				//暂停场景
-				countDownTitle = "Start";
+				countDownTitle = "Continue";
 				SSDirector.getInstance().currentScenceController.Pause();
 			}
 		}
@@ -62,6 +75,7 @@ public class UserGUI : MonoBehaviour
 			{
 				//选择重来
 				SSDirector.getInstance().currentScenceController.Restart();
+//				mycount.timer = 3;
 			}
 		}
 		else if (SSDirector.getInstance().currentScenceController.state == State.LOSE)//失败
@@ -69,10 +83,16 @@ public class UserGUI : MonoBehaviour
 			if (GUI.Button(new Rect(castw(2f), casth(6f), width, height), "Lose!"))
 			{
 				SSDirector.getInstance().currentScenceController.Restart();
+//				mycount.timer = 3;
 			}
 		}
 	}
-
+//	IEnumerator StartCoutine()  
+//	{  
+//
+//		yield return new WaitForSeconds(1f);
+//		count--;
+//	} 
 	void Update()
 	{
 		//监测用户射击

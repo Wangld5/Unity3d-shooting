@@ -11,6 +11,8 @@ namespace Com.game{
 		void Pause();
 		void Resume();
 		void Restart();
+//		void myGameStart ();
+//		void CountEnd ();
 	}
 
 	public interface IUserAction
