@@ -151,7 +151,7 @@ public class RoundController : MonoBehaviour, ISceneController, IUserAction{
 			leaveSeconds = count = 60;
 		}
 
-		if (round == 4) //只设计了两关, 所以赢了
+		if (round == 4) 
 		{
 			StopAllCoroutines();
 			state = State.WIN;
